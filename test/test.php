@@ -6,6 +6,9 @@ $numberOfTriesToFindServices = (int) ($argv[2] ?? 40);
 $consulUrl = $argv[3] ?? 'http://consul:8500';
 $nginxUrl = $argv[4] ?? 'http://nginx';
 
+// Wait for register all services in consul
+\sleep(20);
+
 $content = \file_get_contents(
     \sprintf('%s/v1/agent/services', $consulUrl)
 );
@@ -18,8 +21,11 @@ foreach ($services as $service) {
     $foundedServices[$service['ID']] = false;
 }
 
-if (\count($registerServices) !== $runInstances) {
-    throw new \Exception('Some PHP services is not running.');
+$countRegisterServices = \count($registerServices);
+if ($countRegisterServices !== $runInstances) {
+    throw new \Exception(
+        \sprintf('Some PHP services is not running. Running %d expected %d.', $countRegisterServices, $runInstances)
+    );
 }
 
 $isScalable = false;
