@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and run containers
+        run: docker-compose up -d --scale php=4
+      - name: Tests
+        run:  docker-compose exec php php /test/test.php 4 80

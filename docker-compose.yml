@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+
+    nginx:
+        build:
+            dockerfile: etc/artifact/Dockerfile
+            context: .
+            target: nginx
+        volumes:
+            - ./app/:/app
+        depends_on:
+            - php
+            - haproxy 
+        ports:
+            - "80:80"
+
+    php:
+        build:
+            dockerfile: etc/artifact/Dockerfile
+            context: .
+            target: php
+        volumes:
+            - ./app/:/app
+            - ./test/:/test
+        depends_on:
+            - haproxy
+
+    consul:
+        command: agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui
+        image: consul:latest
+        ports:
+            - "8500:8500"
+            
+    haproxy:
+        build: ./etc/haproxy
+        links:
+            - consul
