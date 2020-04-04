@@ -9,9 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          scale: [ 4 ]
     steps:
       - uses: actions/checkout@v2
       - name: Build and run containers
-        run: docker-compose up -d --scale php=4
+        run: docker-compose up -d --scale php=${{ matrix.scale }}
       - name: Tests
-        run:  docker-compose exec php php /test/test.php 4 80
+        run: docker-compose exec -T php sh -lc "php /test/test.php ${{ matrix.scale }} 80"
