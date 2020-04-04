@@ -17,4 +17,4 @@ jobs:
       - name: Build and run containers
         run: docker-compose build; docker-compose up -d --scale php=${{ matrix.scale }}
       - name: Tests
-        run: docker-compose exec -T php sh -lc "php /test/test.php ${{ matrix.scale }} 200"
+        run: docker-compose exec -T php sh -lc "php /test/test.php ${{ matrix.scale }} 1000"
